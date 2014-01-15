@@ -1,6 +1,6 @@
 import socket, threading, time, msvcrt
 
-print "Please enter the following information"
+print "Fill in the following"
 url_inpt = raw_input("URL: ")
 port_input = raw_input("Port: ")
 print "Starting IIM client on port: " + _port
@@ -8,9 +8,9 @@ print "Starting IIM client on port: " + _port
 socketOut = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 socketOut.connect((_url, int(_port)))
 
-# clear screen here
 
-print "Enter your user details"
+
+print "Enter details"
 from_user = raw_input("User id: ")
 to_user = raw_input("Buddy id: ")
 
@@ -18,9 +18,9 @@ to_user = raw_input("Buddy id: ")
 print """Connecting to server..."""
 
 
-# send user details and receive response
-socketOut.sendall('@@@'+from_user+'##'+to_user)
-response = socketOut.recv(8192)
+
+socketOut.sendall('@@@'+from_user+'##'+to_user)     # user details and response
+response = socketOut.recv(port number)
 
 def listener():
     while 1:
@@ -36,7 +36,7 @@ if response == 'AUTH_OK':
     th = threading.Thread(target=listener)
     th.setDaemon(1)
     th.start()
-    print "Background polling thread started"
+    print "Background started"
     while 1:
 
         if msvcrt.kbhit():
@@ -55,6 +55,6 @@ if response == 'AUTH_OK':
                 data = ""
 
 else:
-    print "Auhentication failed!"
+    print "Ooops...Try Again!!"
         
 socketOut.close()
