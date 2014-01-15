@@ -1,56 +1,47 @@
 import SocketServer
 
-conn_port = 8881
+conn_port = port number
 conn_clients = {}
 
-# a connected client
+
 class Client:
-    # queue of messages sent to this client
     queue = []
     def __init__(self, conn_sock, conn_src, conn_dest):
-        print "Creating IM client"
+        print "Thanks for waiting"
         self.socket = conn_sock
-        print "Incoming socket: %s" % self.socket
+        print "Incoming: %s" % self.socket
         self.user = conn_src
         print "Username: " + self.user
-        # buddies should be a list
-        self.buddy = conn_dest
+        self.buddy = conn_dest                       # buddy_list
         print "Buddy: " + self.buddy
-        print "Created IM client"
+        print "Created Buddy"
 
-# the server handling requests
+# handling requests
 class Broker(SocketServer.BaseRequestHandler):
     def handle(self):
         print "Connected from", self.client_address
         while True:
-            receivedData = self.request.recv(8192)
+            receivedData = self.request.recv(port_number)
             if not receivedData:
                 break
             
-            # if handshake packet, extract client details
-            if receivedData.startswith('@@@',0,3):
-                print "Received handshake packet"
-                # strip handshake code
-                receivedData = receivedData.replace('@@@', '', 1).lstrip()
+   
+            if receivedData.startswith('@@@',0,3):              # success == extract client details
+                print "Received"
+                receivedData = receivedData.replace('@@@', '', 1).lstrip()    # strip handling code
                 l = receivedData.split('##',1)
                 socket = self.request
                 src = l[0]
                 dest = l[1]
                 c = Client(socket, src, dest)
-                # use username as key on hashmap
-                conn_clients[src] = c
-                # send success message
-                socket.sendall('AUTH_OK')
-                print "Client " + src + " authenticated"
+                conn_clients[src] = c                   # use username as key 
+                socket.sendall('AUTH_OK')                 # send success message
+                print "Client " + src + " authenticated"       
 
-            # if polling packet, extract sender details and send messages
-            if receivedData.startswith('$$$',0,3):
-                # strip polling message
-                print "Received polling packet"
+            
+            if receivedData.startswith('$$$',0,3):   # if expecting request, extract sender details and send messages
                 src = receivedData.replace('$$$', '', 1).lstrip()
-                # only poll if more than 1 user
-                if len(conn_clients) > 1:                
-                    # use username as key on hashmap
+                if len(conn_clients) > 1:              # poll if more than 1 user     
                     conn_clients[src] = c
                     if len(c.queue) < 1:
                         c.socket.sendall(" ")
@@ -58,28 +49,25 @@ class Broker(SocketServer.BaseRequestHandler):
                         msgs = ""
                         for q in c.queue:
                             msgs += q + '\n'
-                            # send queued messages
                         c.socket.sendall(msgs)
                         c.queue = []
                         print "Sent all pending messages for " + c.user
                 else:
                     socket.sendall(" ")
 
-            # if message packet, extract data and append to target queue
+          
             if receivedData.startswith('###',0,3):
-                print "Received message packet"
+        
                 receivedData = receivedData.replace('###', '', 1).lstrip()
                 l = receivedData.split('##',1)
                 src = l[0]
                 text = l[1]
                 if text.strip != "":
                     print "Message not empty"
-                    # extract client
-                    clientSrc = conn_clients[src]
-                    # ...and its buddy
-                    clientDest = conn_clients[clientSrc.buddy]
+                    clientSrc = conn_clients[src]   #client source
+                    clientDest = conn_clients[clientSrc.buddy]     #client buddy
                     msg = src+": "+text
-                    print "Appended message to queue of " + clientSrc.buddy
+                    print "Adding message to list" + clientSrc.buddy
                     clientDest.queue.append(msg)
                     print "Queue of: " + clientDest.user + " = %s" % clientDest.queue
                 clientDest.socket.sendall(" ")
@@ -94,7 +82,7 @@ class Broker(SocketServer.BaseRequestHandler):
                 del conn_clients[c.user]
                 print "Removed " + c.user + " from hashmap"
 
-        print "Disconnected from", self.client_address
+        print "Disconnected", self.client_address
         
 srv = SocketServer.ThreadingTCPServer(('',conn_port),Broker)
 print "Started IIM server on port %d" % conn_port
