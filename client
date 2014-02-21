@@ -42,7 +42,7 @@ if response == 'All Good':
         else:
             character = None
         if character:
-            if character != '\r':
+            if character != '\n':
                 data += character
             else:
                 print '\n'
