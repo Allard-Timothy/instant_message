@@ -26,9 +26,9 @@ class Broker(SocketServer.BaseRequestHandler):
                 break
             
    
-            if receivedData.startswith('@@@',0,3):              # success == extract client details
+            if receivedData.startswith('@@@',0,3):              # client details
                 print "Received"
-                receivedData = receivedData.replace('@@@', '', 1).lstrip()    # strip handling code
+                receivedData = receivedData.replace('@@@', '', 1).lstrip()    # get handling code
                 l = receivedData.split('##',1)
                 socket = self.request
                 src = l[0]
