@@ -1,7 +1,7 @@
 import socket, threading, time, msvcrt
 
 print "Fill this out"
-url_inpt = raw_input("URL: ")
+url_input = raw_input("URL: ")
 port_input = raw_input("Port: ")
 print "Starting Instant Messenger: " + port
 
@@ -15,7 +15,7 @@ from_user = raw_input("User id: ")
 to_user = raw_input("Bro id: ")
 
 
-print """Connecting to server..."""
+print """Connecting..."""
 
 
 
@@ -24,7 +24,7 @@ response = socketOut.recv(port number)
 
 def listener():
     while 1:
-        time.sleep(5)
+        time.sleep(3)
         socketOut.sendall('$$$'+from_user)
         response = socketOut.recv(####)
         if response != " ":
@@ -53,6 +53,6 @@ if response == 'All Good':
                 resp_data = ""
 
 else:
-    print "Ooops...Try Again!!"
+    print "Doh!!!....Try again dude!"
         
 socketOut.close()
