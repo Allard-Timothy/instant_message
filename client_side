@@ -1,18 +1,18 @@
 import socket, threading, time, msvcrt
 
-print "Fill in the following"
+print "Fill this out"
 url_inpt = raw_input("URL: ")
 port_input = raw_input("Port: ")
-print "Starting IIM client on port: " + _port
+print "Starting Instant Messenger: " + port
 
 socketOut = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-socketOut.connect((_url, int(_port)))
+socketOut.connect((url, int(port)))
 
 
 
-print "Enter details"
+print "Fill out below"
 from_user = raw_input("User id: ")
-to_user = raw_input("Buddy id: ")
+to_user = raw_input("Bro id: ")
 
 
 print """Connecting to server..."""
@@ -26,33 +26,31 @@ def listener():
     while 1:
         time.sleep(5)
         socketOut.sendall('$$$'+from_user)
-        response = socketOut.recv(8192)
+        response = socketOut.recv(####)
         if response != " ":
             print "\n" + response
 
 
-if response == 'AUTH_OK':
-    data = ""
-    th = threading.Thread(target=listener)
-    th.setDaemon(1)
-    th.start()
-    print "Background started"
+if response == 'All Good':
+    resp_data = ""
+    target_thread = threading.Thread(target=listener)
+    target_thread.setDaemon(1)
+    target_thread.start()
     while 1:
-
         if msvcrt.kbhit():
-            ch = msvcrt.getche()
+            character = msvcrt.get()
         else:
-            ch = None
-        if ch:
-            if ch != '\r':
-                data += ch
+            character = None
+        if character:
+            if character != '\r':
+                data += character
             else:
                 print '\n'
                 socketOut.sendall('###'+from_user+'##'+data)
-                response = socketOut.recv(8192)
+                response = socketOut.recv(###)
                 if response != " ":
                     print response
-                data = ""
+                resp_data = ""
 
 else:
     print "Ooops...Try Again!!"
