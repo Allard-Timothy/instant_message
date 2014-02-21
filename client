@@ -23,7 +23,7 @@ socketOut.sendall('@@@'+from_user+'##'+to_user)     # user details and response
 response = socketOut.recv(port number)
 
 def listener():
-    while 1:
+    while True:
         time.sleep(3)
         socketOut.sendall('$$$'+from_user)
         response = socketOut.recv(####)
@@ -36,7 +36,7 @@ if response == 'All Good':
     target_thread = threading.Thread(target=listener)
     target_thread.setDaemon(1)
     target_thread.start()
-    while 1:
+    while True:
         if msvcrt.kbhit():
             character = msvcrt.get()
         else:
