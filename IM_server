@@ -6,11 +6,11 @@ conn_clients = {}
 
 class Client:
     queue = []
-    def __init__(self, conn_sock, conn_src, conn_dest):
+    def __init__(self, conn_socket, conn_source, conn_dest):
         print "You're currently waiting, duh"
-        self.socket = conn_sock
+        self.socket = conn_socket
         print "Heads Up, here comes: %s" % self.socket
-        self.user = conn_src
+        self.user = conn_source
         print "User: " + self.user
         self.bro = conn_dest                       # bro_list :-)
         print "Bro: " + self.buddy
@@ -21,59 +21,59 @@ class Handler(SocketServer.BaseRequestHandler):
     def handle(self):
         print "Connected to", self.client_address
         while True:
-            receivedData = self.request.recv(port_number)
-            if not receivedData:
+            received_data = self.request.recv(port_number)
+            if not received_data:
                 break
             
    
-            if receivedData.startswith('%%%',0,3):              # client details
+            if received_data.startswith('%%%',0,3):              # client details
                 print "Success"
-                receivedData = receivedData.replace('%%%', '', 1).lstrip()    # get handling code
-                QD = receivedData.split('##',1)
+                received_data = received_data.replace('%%%', '', 1).lstrip()    # get handling code
+                QD = received_data.split('##',1)
                 socket = self.request
-                src = QD[0]
+                source = QD[0]
                 dest = QD[1]
-                client = client(socket, src, dest)
-                conn_clients[src] = client                  # use username as key 
+                client = client(socket, source, dest)
+                conn_clients[source] = client                  # use username as key 
                 socket.sendall('AUTH_OK')                 # send success message
-                print "Connected " + src + "Success "       
+                print "Connected " + source + "Success "       
 
             
-            if receivedData.startswith('$$$',0,3):   # send details to user
-                src = receivedData.replace('$$$', '', 1).lstrip()
+            if received_data.startswith('$$$',0,3):   # send details to user
+                source = received_data.replace('$$$', '', 1).lstrip()
                 if len(conn_clients) > 1:              # check if more than 1 user     
-                    conn_clients[src] = c
+                    conn_clients[source] = client
                     if len(client.queue) < 1:
                         client.socket.sendall(" ")
                     else:
-                        msgs = ""
+                        messages = ""
                         for q in client.queue:
-                            msgs += q + '\n'
+                            messages += q + '\n'
                         client.socket.sendall(msgs)
                         client.queue = []
-                        print "Sent all pending messages for " + client.user
+                        print "Sent the messages " + client.user
                 else:
                     socket.sendall(" ")
 
           
-            if receivedData.startswith('&&&',0,3):
+            if received_data.startswith('&&&',0,3):
         
-                receivedData = receivedData.replace('###', '', 1).lstrip()
-                QD = receivedData.split('##',1)
-                src = QD[0]
+                received_data = received_data.replace('###', '', 1).lstrip()
+                QD = received_data.split('###',1)
+                source = QD[0]
                 text = QD[1]
                 if text.strip != "":
                     print "Got some stuff here"
-                    clientSrc = conn_clients[src]   #client source
-                    clientDest = conn_clients[clientSrc.bro]     #client bro
-                    msg = src+": "+text
-                    print "Adding message to list" + clientSrc.bro
-                    clientDest.queue.append(msg)
-                    print "Queue of: " + clientDest.user + " = %s" % clientDest.queue
-                clientDest.socket.sendall(" ")
+                    client_source = conn_clients[source]   #client source
+                    client_dest = conn_clients[client_source.bro]     #client bro
+                    msg = source+": "+text
+                    print "Adding to list" + client_source.bro
+                    client_dest.queue.append(msg)
+                    print "Queue of: " + client_dest.user + " = %s" % client_dest.queue
+                client_dest.socket.sendall(" ")
             else:
-                if len(_clients) < 2:
-                    self.request.sendall(receivedData)
+                if len(clients) < 2:
+                    self.request.sendall(received_data)
 
         for client in conn_clients.values():
             if self.request == client.socket:
