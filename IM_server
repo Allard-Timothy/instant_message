@@ -13,7 +13,7 @@ class Client:
         self.user = conn_source
         print "User: " + self.user
         self.bro = conn_dest                       # bro_list :-)
-        print "Bro: " + self.buddy
+        print "Bro: " + self.bro
         print "Created Bro"
 
 
