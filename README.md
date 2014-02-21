@@ -1,4 +1,4 @@
 instant_message
 ===============
 
-simple IM service 
+Instant messenger
